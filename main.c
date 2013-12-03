@@ -30,10 +30,8 @@ int main(int argc, char** argv) {
                 }
         }
         if (argc == 1) {
-        	printf("Singlefile");
-            status = procesarArchivo(fileno(stdin));
+            status = procesarArchivo(fileno(stdin),fileno(stdout));
         } else {
-        		printf("Multifiles");
                 int arch = 1;
                 FILE* entrada;
                 while (arch < argc) {
@@ -44,7 +42,7 @@ int main(int argc, char** argv) {
                                 return 1;
                         }
                         fd = fileno(entrada);
-                        status = procesarArchivo(fd);
+                        status = procesarArchivo(fd,fileno(stdout));
                         if (status){
                         	return status;
                         }

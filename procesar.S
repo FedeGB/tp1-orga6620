@@ -21,6 +21,7 @@ procesarArchivo:
 	move	$fp, sp
 # end frame declaration
 	sw a0, 56($fp)
+	sw a1, 60($fp)
 
 	li a0, 1
 	sw a0, 0($fp)
@@ -89,6 +90,7 @@ end_for:
 end_line: lw a0, 20($fp)
 	lw a1, 24($fp)
 	li a2, 1
+	lw a3, 60($fp)
 	jal write_line_bacwards
 	lw a0, 20($fp)
 	jal myfree
@@ -103,6 +105,7 @@ end_line: lw a0, 20($fp)
 end_while: lw a0, 20($fp)
 	lw a1, 24($fp)
 	li a2, 0
+	lw a3, 60($fp)
 	jal write_line_bacwards
 	li t0, 0
 	sw t0, 36($fp)
@@ -144,13 +147,14 @@ write_line_bacwards: .frame $fp, 16, ra
 	sw	a1, 20($fp)
 	sw	a1, 0($fp)
 	sw	a2, 24($fp)
+	sw	a3, 28($fp)
 
 write_for: lw t0, 0($fp)
 	subu t0, t0, 1
 	sw t0, 0($fp)
 	ble t0, -1, write_finish
 	li v0, SYS_write
-	li a0, 1
+	lw a0, 28($fp)
 	lw a1, 16($fp)
 	lw t0, 0($fp)
 	addu a1, t0, a1
@@ -162,7 +166,7 @@ write_finish:
 	lw a2, 24($fp)
 	beqz a2, no_line
 	li v0, SYS_write
-	li a0, 1
+	lw a0, 28($fp)
 	la a1, ascii_line
 	li a2, 1
 	syscall
