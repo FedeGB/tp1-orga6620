@@ -5,6 +5,7 @@
 	.align	2
 
 	.globl	procesarArchivo
+	.globl  reverse_errmsg
 	.extern mymalloc
 	.extern myfree
 	.ent	procesarArchivo
@@ -118,13 +119,18 @@ end_while: lw a0, 20($fp)
 	b end_procesarArchivo
 error_malloc: lw t0, 32($fp)
 	sw t0, 20($fp)
-error_reading: lw a0, 20($fp)
+error_reading: li t0, 2
+	sw t0, 36($fp)
+	lw a0, 20($fp)
 	sw a0, 0($fp)
 	jal myfree
 second_bad_malloc: lw a0, 16($fp)
 	sw a0, 0($fp)
 	jal myfree
-first_bad_malloc: li t0, 1
+first_bad_malloc:
+	lw t0, 36($fp)
+	beq t0, 2, end_procesarArchivo
+	li t0, 1
 	sw t0, 36($fp)
 end_procesarArchivo: lw	v0, 36($fp)
 # init frame destruction
@@ -174,5 +180,11 @@ no_line: lw	$fp, 12(sp)
 	addu	sp, sp, 16
 	j	ra	
 .end write_line_bacwards
-.data
-	ascii_line: .asciiz "\n"
+.rdata
+ascii_line: .asciiz "\n"
+.align 2
+reverse_errmsg: .word noerror,error1, error2
+.align 0
+noerror: .asciiz "La aplicacion se ejecuto exitosamente"
+error1:	.asciiz "Hubo un problema al intentar leer un caracter, por favor intente mas tarde nuevamente"
+error2: .asciiz "Hubo un problema al intentar alocar memoria, por favor intente mas tarde nuevamente"
