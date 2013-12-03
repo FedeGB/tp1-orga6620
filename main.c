@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <procesar.h>
+#include "procesar.h"
 
 #define VERSION 3
 
@@ -30,8 +30,10 @@ int main(int argc, char** argv) {
                 }
         }
         if (argc == 1) {
-                status = procesarArchivo(stdin);
+        	printf("Singlefile");
+            status = procesarArchivo(fileno(stdin));
         } else {
+        		printf("Multifiles");
                 int arch = 1;
                 FILE* entrada;
                 while (arch < argc) {
@@ -43,8 +45,9 @@ int main(int argc, char** argv) {
                         }
                         fd = fileno(entrada);
                         status = procesarArchivo(fd);
-                        if (status)
-                                return status;
+                        if (status){
+                        	return status;
+                        }
                         fclose(entrada);
                         entrada = NULL;
                         arch++;
